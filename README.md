@@ -1058,7 +1058,7 @@ Dữ liệu thường chảy từ trên xuống, từ cha đến con. `Directive
 
 Ở đây, chúng ta đang liên kết với giá trị của một trường đầu vào văn bản, sử dụng sự kiện `input`. Các liên kết trên các phần tử khác có thể sử dụng các sự kiện khác như `change`.
 
-### Binding <select> value
+### Binding select value
 
 - Liên kết giá trị của một phần tử `<select>` tương ứng với thuộc tính `value` của thẻ `<option>` được chọn, giá trị này có thể là bất kỳ kiểu dữ liệu nào (không chỉ là chuỗi như thường thấy trong `DOM`).
 
