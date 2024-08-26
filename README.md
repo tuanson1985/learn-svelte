@@ -829,6 +829,7 @@ Khối `await` trong `Svelte` cho phép bạn xử lý ba trạng thái khác nh
 	<Component />
 {/key}
 ```
+
 ## Special tags
 
 ### {@html ...}
@@ -855,6 +856,7 @@ Khối `await` trong `Svelte` cho phép bạn xử lý ba trạng thái khác nh
 ```svelte
 {@debug}
 ```
+
 ```svelte
 {@debug var1, var2, ..., varN}
 ```
@@ -873,7 +875,9 @@ Thẻ `{@debug ...}` cung cấp một giải pháp thay thế cho `console.log(.
 
 <h1>Hello {user.firstname}!</h1>
 ```
+
 Thẻ `{@debug ...}` chấp nhận danh sách tên biến được phân tách bằng dấu phẩy (không phải các biểu thức tùy ý).
+
 ```svelte
 <!-- Có thể biên dịch -->
 {@debug user}
@@ -917,9 +921,11 @@ Cũng như các thuộc tính, các phần tử có thể có các `directive`, 
 ```svelte
 on:eventname={handler}
 ```
+
 ```svelte
 on:eventname|modifiers={handler}
 ```
+
 - Sử dụng directive on: để lắng nghe các sự kiện DOM.
 
 ```svelte
@@ -944,6 +950,7 @@ on:eventname|modifiers={handler}
 	count: {count}
 </button>
 ```
+
 - Thêm các `modifier` vào sự kiện DOM bằng ký tự |.
 
 ```svelte
@@ -955,25 +962,27 @@ on:eventname|modifiers={handler}
 
 - Các `modifier` sau đây có sẵn trong `Svelte`:
 
- + `preventDefault` — gọi `event.preventDefault()` trước khi chạy hàm xử lý.
- + `stopPropagation` — gọi `event.stopPropagation()`, ngăn sự kiện tiếp cận phần tử tiếp theo.
- + `stopImmediatePropagation` — gọi `event.stopImmediatePropagation()`, ngăn các hàm xử lý khác của cùng một sự kiện không được kích hoạt.
- + `passive` — cải thiện hiệu suất cuộn cho các sự kiện cảm ứng/cuộn (`Svelte` sẽ tự động thêm nó khi an toàn để làm như vậy).
- + `nonpassive` — thiết lập rõ ràng `passive: false`.
- + `capture` — kích hoạt hàm xử lý trong giai đoạn bắt đầu `(capture phase)` thay vì giai đoạn nổi bọt `(bubbling phase)`.
- + `once` — loại bỏ hàm xử lý sau lần đầu tiên nó chạy.
- + `self` — chỉ kích hoạt hàm xử lý nếu `event.target` là chính phần tử đó.
- + `trusted` — chỉ kích hoạt hàm xử lý nếu `event.isTrusted` là `true`, tức là sự kiện được kích hoạt bởi hành động của người dùng.
+* `preventDefault` — gọi `event.preventDefault()` trước khi chạy hàm xử lý.
+* `stopPropagation` — gọi `event.stopPropagation()`, ngăn sự kiện tiếp cận phần tử tiếp theo.
+* `stopImmediatePropagation` — gọi `event.stopImmediatePropagation()`, ngăn các hàm xử lý khác của cùng một sự kiện không được kích hoạt.
+* `passive` — cải thiện hiệu suất cuộn cho các sự kiện cảm ứng/cuộn (`Svelte` sẽ tự động thêm nó khi an toàn để làm như vậy).
+* `nonpassive` — thiết lập rõ ràng `passive: false`.
+* `capture` — kích hoạt hàm xử lý trong giai đoạn bắt đầu `(capture phase)` thay vì giai đoạn nổi bọt `(bubbling phase)`.
+* `once` — loại bỏ hàm xử lý sau lần đầu tiên nó chạy.
+* `self` — chỉ kích hoạt hàm xử lý nếu `event.target` là chính phần tử đó.
+* `trusted` — chỉ kích hoạt hàm xử lý nếu `event.isTrusted` là `true`, tức là sự kiện được kích hoạt bởi hành động của người dùng.
 
 - Các `modifier` có thể được kết hợp với nhau, ví dụ như `on:click|once|capture={...}`.
 
 - Nếu `directive on`: được sử dụng mà không có giá trị, `component` sẽ chuyển tiếp sự kiện, có nghĩa là người sử dụng `component` có thể lắng nghe sự kiện đó.
 
 ```svelte
-<button on:click> 
-Trong ví dụ này, khi sự kiện click xảy ra trên nút, component sẽ phát ra sự kiện đó, cho phép các thành phần sử dụng component này lắng nghe và xử lý sự kiện click.
- </button>
+<button on:click>
+	Trong ví dụ này, khi sự kiện click xảy ra trên nút, component sẽ phát ra sự kiện đó, cho phép các
+	thành phần sử dụng component này lắng nghe và xử lý sự kiện click.
+</button>
 ```
+
 - Có thể có nhiều trình xử lý sự kiện cho cùng một sự kiện:
 
 ```svelte
@@ -988,6 +997,7 @@ Trong ví dụ này, khi sự kiện click xảy ra trên nút, component sẽ p
 		trackEvent(event);
 	}
 </script>
+
 <!--  Khi người dùng nhấp vào nút, cả hai hàm increment và track sẽ được gọi -->
 <button on:click={increment} on:click={track}>Click me!</button>
 ```
@@ -1008,6 +1018,7 @@ Dữ liệu thường chảy từ trên xuống, từ cha đến con. `Directive
 
 <input type="checkbox" bind:checked={yes} />
 ```
+
 - Nếu tên và giá trị trùng khớp, bạn có thể sử dụng cú pháp rút gọn.
 
 ```svelte
@@ -1016,6 +1027,7 @@ Dữ liệu thường chảy từ trên xuống, từ cha đến con. `Directive
 <input bind:value={value} />
 -->
 ```
+
 - Liên kết số: Các giá trị đầu vào số sẽ được chuyển đổi kiểu; mặc dù `input.value` là một chuỗi theo cách mà `DOM` xử lý, nhưng `Svelte` sẽ coi nó là một số. Nếu trường đầu vào trống hoặc không hợp lệ (trong trường hợp `type="number"`), giá trị sẽ là `null`.
 
 ```svelte
@@ -1029,6 +1041,7 @@ Dữ liệu thường chảy từ trên xuống, từ cha đến con. `Directive
 <label for="avatar">Upload a picture:</label>
 <input accept="image/png, image/jpeg" bind:files id="avatar" name="avatar" type="file" />
 ```
+
 - Thứ tự của các `directive`: Khi sử dụng các `directive bind:` cùng với các `directive on:`, thứ tự mà chúng được định nghĩa sẽ ảnh hưởng đến giá trị của biến liên kết khi hàm xử lý sự kiện được gọi.
 
 ```svelte
@@ -1042,6 +1055,7 @@ Dữ liệu thường chảy từ trên xuống, từ cha đến con. `Directive
 	on:input={() => console.log('New value:', value)}
 />
 ```
+
 Ở đây, chúng ta đang liên kết với giá trị của một trường đầu vào văn bản, sử dụng sự kiện `input`. Các liên kết trên các phần tử khác có thể sử dụng các sự kiện khác như `change`.
 
 ### Binding <select> value
@@ -1080,9 +1094,9 @@ Dữ liệu thường chảy từ trên xuống, từ cha đến con. `Directive
 
 - Các phần tử có thuộc tính `contenteditable` hỗ trợ các liên kết sau:
 
- + `innerHTML`
- + `innerText`
- + `textContent`
+* `innerHTML`
+* `innerText`
+* `textContent`
 
 ```svelte
 <div contenteditable="true" bind:innerHTML={html} />
@@ -1100,23 +1114,28 @@ Dữ liệu thường chảy từ trên xuống, từ cha đến con. `Directive
 ### Media element bindings
 
 - Bảy liên kết chỉ đọc `(readonly)`:
- + `duration` (chỉ đọc) — tổng thời lượng của `video`, tính bằng giây.
- + `buffered` (chỉ đọc) — một mảng các đối tượng `{start, end}` đại diện cho các khoảng đã tải trước.
- + `played` (chỉ đọc) — tương tự như `buffered`, nhưng đại diện cho các khoảng đã phát.
- + `seekable` (chỉ đọc) — tương tự như `buffered`, nhưng đại diện cho các khoảng có thể tua.
- + `seeking` (chỉ đọc) — `boolean`, xác định xem `video` đang được tua hay không.
- + `ended` (chỉ đọc) — `boolean`, xác định xem `video` đã kết thúc hay chưa.
- + `readyState` (chỉ đọc) — một giá trị số từ 0 đến 4, biểu thị trạng thái sẵn sàng của `media`.
+
+* `duration` (chỉ đọc) — tổng thời lượng của `video`, tính bằng giây.
+* `buffered` (chỉ đọc) — một mảng các đối tượng `{start, end}` đại diện cho các khoảng đã tải trước.
+* `played` (chỉ đọc) — tương tự như `buffered`, nhưng đại diện cho các khoảng đã phát.
+* `seekable` (chỉ đọc) — tương tự như `buffered`, nhưng đại diện cho các khoảng có thể tua.
+* `seeking` (chỉ đọc) — `boolean`, xác định xem `video` đang được tua hay không.
+* `ended` (chỉ đọc) — `boolean`, xác định xem `video` đã kết thúc hay chưa.
+* `readyState` (chỉ đọc) — một giá trị số từ 0 đến 4, biểu thị trạng thái sẵn sàng của `media`.
+
 - Năm liên kết hai chiều:
- + `currentTime` — thời gian phát hiện tại của `video`, tính bằng giây.
- + `playbackRate` — tốc độ phát `video`, với giá trị 1 là tốc độ 'bình thường'.
- + `paused` — `boolean`, xác định xem `video` có đang tạm dừng hay không.
- + `volume` — giá trị từ 0 đến 1, biểu thị âm lượng của `video`.
- + `muted` — `boolean`, xác định xem `video` có bị tắt tiếng hay không.
+
+* `currentTime` — thời gian phát hiện tại của `video`, tính bằng giây.
+* `playbackRate` — tốc độ phát `video`, với giá trị 1 là tốc độ 'bình thường'.
+* `paused` — `boolean`, xác định xem `video` có đang tạm dừng hay không.
+* `volume` — giá trị từ 0 đến 1, biểu thị âm lượng của `video`.
+* `muted` — `boolean`, xác định xem `video` có bị tắt tiếng hay không.
+
 - Liên kết bổ sung cho `video`:
- + `videoWidth` (chỉ đọc) — chiều rộng của `video`.
- + `videoHeight` (chỉ đọc) — chiều cao của `video`.
- 
+
+* `videoWidth` (chỉ đọc) — chiều rộng của `video`.
+* `videoHeight` (chỉ đọc) — chiều cao của `video`.
+
 ```svelte
 <video
 	src={clip}
@@ -1141,8 +1160,8 @@ Dữ liệu thường chảy từ trên xuống, từ cha đến con. `Directive
 
 - Phần tử `<img>` có hai liên kết chỉ đọc:
 
- + `naturalWidth` (chỉ đọc) — chiều rộng gốc của hình ảnh, có sẵn sau khi hình ảnh đã được tải.
- + `naturalHeight` (chỉ đọc) — chiều cao gốc của hình ảnh, có sẵn sau khi hình ảnh đã được tải.
+* `naturalWidth` (chỉ đọc) — chiều rộng gốc của hình ảnh, có sẵn sau khi hình ảnh đã được tải.
+* `naturalHeight` (chỉ đọc) — chiều cao gốc của hình ảnh, có sẵn sau khi hình ảnh đã được tải.
 
 ```svelte
 <img
@@ -1155,10 +1174,10 @@ Dữ liệu thường chảy từ trên xuống, từ cha đến con. `Directive
 
 - Các phần tử cấp khối có bốn liên kết chỉ đọc, được đo bằng kỹ thuật tương tự như sau:
 
- + `clientWidth` (chỉ đọc) — chiều rộng của nội dung phần tử, bao gồm `padding` nhưng không bao gồm viền và cuộn dọc.
- + `clientHeight` (chỉ đọc) — chiều cao của nội dung phần tử, bao gồm `padding` nhưng không bao gồm viền và cuộn dọc.
- + `offsetWidth` (chỉ đọc) — chiều rộng của phần tử, bao gồm `padding`, viền và cuộn dọc.
- + `offsetHeight` (chỉ đọc) — chiều cao của phần tử, bao gồm `padding`, viền và cuộn dọc.
+* `clientWidth` (chỉ đọc) — chiều rộng của nội dung phần tử, bao gồm `padding` nhưng không bao gồm viền và cuộn dọc.
+* `clientHeight` (chỉ đọc) — chiều cao của nội dung phần tử, bao gồm `padding` nhưng không bao gồm viền và cuộn dọc.
+* `offsetWidth` (chỉ đọc) — chiều rộng của phần tử, bao gồm `padding`, viền và cuộn dọc.
+* `offsetHeight` (chỉ đọc) — chiều cao của phần tử, bao gồm `padding`, viền và cuộn dọc.
 
 ```svelte
 <div bind:offsetWidth={width} bind:offsetHeight={height}>
@@ -1195,12 +1214,13 @@ bind:group={variable}
 ```
 
 - Chú thích:
- + `Radio inputs`: Các `radio inputs` trong cùng một nhóm `bind:group` sẽ loại trừ lẫn nhau, tức là chỉ một lựa chọn có thể được chọn tại một thời điểm.
 
- + `Checkbox inputs`: Các `checkbox inputs` trong cùng một nhóm `bind:group` sẽ thêm giá trị vào một mảng. Mỗi `checkbox` được chọn sẽ được thêm vào mảng `fillings`.
+* `Radio inputs`: Các `radio inputs` trong cùng một nhóm `bind:group` sẽ loại trừ lẫn nhau, tức là chỉ một lựa chọn có thể được chọn tại một thời điểm.
+
+* `Checkbox inputs`: Các `checkbox inputs` trong cùng một nhóm `bind:group` sẽ thêm giá trị vào một mảng. Mỗi `checkbox` được chọn sẽ được thêm vào mảng `fillings`.
 
 - Lưu ý:
-`bind:group` chỉ hoạt động nếu các `input` nằm trong cùng một thành phần `Svelte`.
+  `bind:group` chỉ hoạt động nếu các `input` nằm trong cùng một thành phần `Svelte`.
 
 ### bind:this
 
@@ -1317,11 +1337,12 @@ action = (node: HTMLElement, parameters: any) => {
 ```
 
 - Thêm tham số cho `Action`
- + Một `Action` có thể nhận một tham số. Nếu giá trị trả về của hàm có phương thức `update`, phương thức này sẽ được gọi bất cứ khi nào tham số thay đổi, ngay sau khi `Svelte` cập nhật `markup`.
 
- + Không cần lo lắng về việc hàm `foo` được khai báo lại cho mỗi `instance` của `component` — `Svelte` sẽ tự động đưa những hàm không phụ thuộc vào trạng thái cục bộ ra khỏi định nghĩa của `component`.
+* Một `Action` có thể nhận một tham số. Nếu giá trị trả về của hàm có phương thức `update`, phương thức này sẽ được gọi bất cứ khi nào tham số thay đổi, ngay sau khi `Svelte` cập nhật `markup`.
 
- ```svelte
+* Không cần lo lắng về việc hàm `foo` được khai báo lại cho mỗi `instance` của `component` — `Svelte` sẽ tự động đưa những hàm không phụ thuộc vào trạng thái cục bộ ra khỏi định nghĩa của `component`.
+
+```svelte
 <script>
 	export let bar;
 
@@ -1345,13 +1366,14 @@ action = (node: HTMLElement, parameters: any) => {
 ```
 
 - Tóm tắt:
- + `Actions` là các hàm xử lý cho các phần tử `DOM`, có thể trả về các phương thức `update` và `destroy`.
- + `update`: Được gọi khi tham số của `Action` thay đổi.
- + `destroy`: Được gọi khi phần tử `DOM` bị xóa.
 
- ### transition:fn
+* `Actions` là các hàm xử lý cho các phần tử `DOM`, có thể trả về các phương thức `update` và `destroy`.
+* `update`: Được gọi khi tham số của `Action` thay đổi.
+* `destroy`: Được gọi khi phần tử `DOM` bị xóa.
 
- ```svelte
+### transition:fn
+
+```svelte
 transition:fn
 ```
 
@@ -1387,9 +1409,9 @@ transition = (node: HTMLElement, params: any, options: { direction: 'in' | 'out'
 
 - `Transition` được kích hoạt khi một phần tử xuất hiện hoặc biến mất khỏi `DOM` do thay đổi trạng thái.
 
- + Khi một khối đang thực hiện quá trình chuyển đổi ra khỏi `DOM`, tất cả các phần tử bên trong khối đó, bao gồm cả những phần tử không có chuyển đổi riêng, sẽ được giữ lại trong `DOM` cho đến khi mọi chuyển đổi trong khối đó hoàn thành.
- + Chỉ thị `transition`:
- + Chỉ thị `transition`: xác định một quá trình chuyển đổi hai chiều, nghĩa là nó có thể được đảo ngược một cách mượt mà trong khi chuyển đổi đang diễn ra.
+* Khi một khối đang thực hiện quá trình chuyển đổi ra khỏi `DOM`, tất cả các phần tử bên trong khối đó, bao gồm cả những phần tử không có chuyển đổi riêng, sẽ được giữ lại trong `DOM` cho đến khi mọi chuyển đổi trong khối đó hoàn thành.
+* Chỉ thị `transition`:
+* Chỉ thị `transition`: xác định một quá trình chuyển đổi hai chiều, nghĩa là nó có thể được đảo ngược một cách mượt mà trong khi chuyển đổi đang diễn ra.
 
 ```svelte
 {#if visible}
@@ -1399,10 +1421,9 @@ transition = (node: HTMLElement, params: any, options: { direction: 'in' | 'out'
 
 - `Transitions` cục bộ và toàn cục
 
- + `Transitions` cục bộ `(local)`: Mặc định, trong `Svelte 3`, `transitions` là toàn cục, nhưng hiện tại chúng là cục bộ. Chúng chỉ được kích hoạt khi khối chứa chúng được tạo hoặc bị hủy, không phải khi các khối cha được tạo hoặc hủy.
- + `Transitions` toàn cục `(global)`: Nếu muốn một 1 được kích hoạt cả khi khối cha thay đổi, bạn có thể sử dụng `|global`.
+* `Transitions` cục bộ `(local)`: Mặc định, trong `Svelte 3`, `transitions` là toàn cục, nhưng hiện tại chúng là cục bộ. Chúng chỉ được kích hoạt khi khối chứa chúng được tạo hoặc bị hủy, không phải khi các khối cha được tạo hoặc hủy.
+* `Transitions` toàn cục `(global)`: Nếu muốn một 1 được kích hoạt cả khi khối cha thay đổi, bạn có thể sử dụng `|global`.
 
- 
 ```svelte
 {#if x}
 	{#if y}
@@ -1415,7 +1436,7 @@ transition = (node: HTMLElement, params: any, options: { direction: 'in' | 'out'
 
 - Chuyển đổi `intro` khi `render` lần đầu
 
- + Mặc định, các chuyển đổi `intro` sẽ không chạy khi `render` lần đầu tiên. Bạn có thể thay đổi hành vi này bằng cách đặt `intro: true` khi tạo `component` và đánh dấu `transition` là `global`.
+* Mặc định, các chuyển đổi `intro` sẽ không chạy khi `render` lần đầu tiên. Bạn có thể thay đổi hành vi này bằng cách đặt `intro: true` khi tạo `component` và đánh dấu `transition` là `global`.
 
 ```svelte
 <YourComponent intro={true} transition:fade|global />
@@ -1439,11 +1460,11 @@ Các tham số này được truyền dưới dạng một đối tượng trong
 
 - Sử dụng Hàm Tùy Chỉnh với `Transitions` trong `Svelte`
 
- + `Transitions` trong `Svelte` có thể sử dụng các hàm tùy chỉnh để tạo hiệu ứng chuyển đổi linh hoạt hơn. Khi sử dụng hàm tùy chỉnh, nếu đối tượng trả về có thuộc tính `css`, `Svelte` sẽ tạo một hoạt ảnh `CSS` cho phần tử.
+* `Transitions` trong `Svelte` có thể sử dụng các hàm tùy chỉnh để tạo hiệu ứng chuyển đổi linh hoạt hơn. Khi sử dụng hàm tùy chỉnh, nếu đối tượng trả về có thuộc tính `css`, `Svelte` sẽ tạo một hoạt ảnh `CSS` cho phần tử.
 
 - Hàm `whoosh`:
 
- ```svelte
+```svelte
 <script>
 	import { elasticOut } from 'svelte/easing';
 
@@ -1473,7 +1494,7 @@ Các tham số này được truyền dưới dạng một đối tượng trong
 
 - Hàm Tùy Chỉnh với `tick`, `typewriter`
 
- ```svelte
+```svelte
 <script>
 	export let visible = false;
 
@@ -1507,23 +1528,26 @@ Các tham số này được truyền dưới dạng một đối tượng trong
 ```
 
 - Phối hợp Các `Transition`
- + Nếu một hàm chuyển đổi trả về một hàm thay vì một đối tượng chuyển đổi, hàm này sẽ được gọi trong `microtask` tiếp theo. Điều này cho phép phối hợp nhiều chuyển đổi, tạo ra hiệu ứng như `crossfade`.
+
+* Nếu một hàm chuyển đổi trả về một hàm thay vì một đối tượng chuyển đổi, hàm này sẽ được gọi trong `microtask` tiếp theo. Điều này cho phép phối hợp nhiều chuyển đổi, tạo ra hiệu ứng như `crossfade`.
 
 - Tham số `options`:
- + `direction` là một trong các giá trị: `in`, `out`, hoặc `both`, tùy thuộc vào loại chuyển đổi.
- + Sử dụng các hàm tùy chỉnh cho phép bạn tạo ra các hiệu ứng chuyển đổi tinh vi và sáng tạo trong ứng dụng `Svelte` của bạn.
 
- ### Transition events
+* `direction` là một trong các giá trị: `in`, `out`, hoặc `both`, tùy thuộc vào loại chuyển đổi.
+* Sử dụng các hàm tùy chỉnh cho phép bạn tạo ra các hiệu ứng chuyển đổi tinh vi và sáng tạo trong ứng dụng `Svelte` của bạn.
 
- - Khi một phần tử có hiệu ứng chuyển đổi `(transitions)`, nó sẽ phát ra các sự kiện bổ sung ngoài các sự kiện DOM tiêu chuẩn. Các sự kiện này giúp bạn theo dõi và điều khiển quá trình chuyển đổi.
+### Transition events
+
+- Khi một phần tử có hiệu ứng chuyển đổi `(transitions)`, nó sẽ phát ra các sự kiện bổ sung ngoài các sự kiện DOM tiêu chuẩn. Các sự kiện này giúp bạn theo dõi và điều khiển quá trình chuyển đổi.
 
 - Các Sự Kiện Chuyển Đổi:
- + `introstart`: Kích hoạt khi chuyển đổi vào bắt đầu.
- + `introend`: Kích hoạt khi chuyển đổi vào kết thúc.
- + `outrostart`: Kích hoạt khi chuyển đổi ra bắt đầu.
- + `outroend`: Kích hoạt khi chuyển đổi ra kết thúc.
 
- ```svelte
+* `introstart`: Kích hoạt khi chuyển đổi vào bắt đầu.
+* `introend`: Kích hoạt khi chuyển đổi vào kết thúc.
+* `outrostart`: Kích hoạt khi chuyển đổi ra bắt đầu.
+* `outroend`: Kích hoạt khi chuyển đổi ra kết thúc.
+
+```svelte
 {#if visible}
 	<p
 		transition:fly={{ y: 200, duration: 2000 }}
@@ -1538,7 +1562,6 @@ Các tham số này được truyền dưới dạng một đối tượng trong
 ```
 
 ### in:fn/out:fn
-
 
 ```svelte
 in:fn
@@ -1576,7 +1599,6 @@ out:fn={params}
 out:fn|global
 ```
 
-
 ```svelte
 out:fn|global={params}
 ```
@@ -1592,13 +1614,13 @@ out:fn|local={params}
 - Khi bạn muốn áp dụng hiệu ứng chuyển đổi cho các phần tử khi chúng vào `(in:)` hoặc rời khỏi `(out:)` `DOM`, bạn có thể sử dụng các chỉ thị `in:` và `out:.`
 
 - Khác Biệt Với `transition`:
- 
- + `in::` Áp dụng hiệu ứng khi phần tử vào `DOM`.
- + `out::` Áp dụng hiệu ứng khi phần tử rời khỏi `DOM`.
- + Các `transitions` áp dụng với `in:` và `out:` không phải là hai chiều như với `transition:`. Điều này có nghĩa là:
+
+* `in::` Áp dụng hiệu ứng khi phần tử vào `DOM`.
+* `out::` Áp dụng hiệu ứng khi phần tử rời khỏi `DOM`.
+* Các `transitions` áp dụng với `in:` và `out:` không phải là hai chiều như với `transition:`. Điều này có nghĩa là:
 
 - Một `transition in:` sẽ không đảo ngược nếu một `transition out:` đang diễn ra. Thay vào đó, `transition in:` sẽ tiếp tục khi `transition out:` đang được thực hiện.
-Nếu một `transition out: `bị hủy, `transitions` sẽ bắt đầu lại từ đầu.
+  Nếu một `transition out: `bị hủy, `transitions` sẽ bắt đầu lại từ đầu.
 
 ### animate:fn
 
@@ -1635,12 +1657,12 @@ DOMRect {
 
 - Sử Dụng `Animation` Trong Các Khối `each` Có Khóa
 
-+ Khi nội dung của một khối `each` có khóa `(keyed each)` được sắp xếp lại, một hiệu ứng hoạt hình `(animation)` sẽ được kích hoạt. Các hiệu ứng hoạt hình không chạy khi phần tử được thêm vào hoặc xóa khỏi khối, mà chỉ khi chỉ số của một mục dữ liệu hiện tại trong khối thay đổi.
+* Khi nội dung của một khối `each` có khóa `(keyed each)` được sắp xếp lại, một hiệu ứng hoạt hình `(animation)` sẽ được kích hoạt. Các hiệu ứng hoạt hình không chạy khi phần tử được thêm vào hoặc xóa khỏi khối, mà chỉ khi chỉ số của một mục dữ liệu hiện tại trong khối thay đổi.
 
 - Điều Kiện:
 
-+ Khóa `(Keyed)`: Để `animation` hoạt động khi các mục được sắp xếp lại, khối each phải sử dụng khóa (`(item)` trong ví dụ).
-Phần Tử Con Ngay Lập Tức: Các chỉ thị `animate`: phải được đặt trên phần tử là con ngay lập tức của khối `each` có khóa.
+* Khóa `(Keyed)`: Để `animation` hoạt động khi các mục được sắp xếp lại, khối each phải sử dụng khóa (`(item)` trong ví dụ).
+  Phần Tử Con Ngay Lập Tức: Các chỉ thị `animate`: phải được đặt trên phần tử là con ngay lập tức của khối `each` có khóa.
 
 ```svelte
 <!-- Khi `list` được sắp xếp lại, hiệu ứng hoạt hình sẽ chạy -->
@@ -1653,7 +1675,7 @@ Phần Tử Con Ngay Lập Tức: Các chỉ thị `animate`: phải được đ
 
 - Tham Số Của `Animation`
 
- + Giống như với `actions` và `transitions`, `animations` cũng có thể nhận các tham số.
+* Giống như với `actions` và `transitions`, `animations` cũng có thể nhận các tham số.
 
 - Bạn có thể truyền các tham số cho hiệu ứng hoạt hình bằng cách sử dụng cú pháp đối tượng trong dấu ngoặc nhọn `(double curly braces)`.
 
@@ -1729,3 +1751,165 @@ Phần Tử Con Ngay Lập Tức: Các chỉ thị `animate`: phải được đ
 {/each}
 ```
 
+## Component directives
+
+### on:eventname
+
+```svelte
+on:eventname={handler}
+```
+
+- Trong `Svelte`, các `component` có thể phát ra sự kiện bằng cách sử dụng `createEventDispatcher` hoặc chuyển tiếp các sự kiện `DOM`.
+
+- Sử Dụng `createEventDispatcher`
+
+* Bạn có thể sử dụng `createEventDispatcher` để phát tín hiệu một cách lập trình.
+
+```svelte
+<script>
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+</script>
+
+<!-- Phát tín hiệu "hello" khi nút được nhấn -->
+<button on:click={() => dispatch('hello')}> one </button>
+```
+
+- Chuyển Tiếp Sự Kiện `DOM`
+
+* Nếu bạn muốn chuyển tiếp sự kiện `DOM` từ một `element` trong `component` của mình, bạn có thể sử dụng cú pháp đơn giản.
+
+```svelte
+<button on:click> two </button>
+```
+
+- Lắng Nghe Sự Kiện Từ `Component`
+
+* Lắng nghe sự kiện từ một `component` hoạt động tương tự như lắng nghe các sự kiện `DOM`. Bạn chỉ cần sử dụng on: để chỉ định hàm xử lý.
+
+```svelte
+<SomeComponent on:whatever={handler} />
+```
+
+- `on:whatever={handler}`: Bất kỳ sự kiện nào phát từ `SomeComponent` với tên `'whatever'` sẽ được xử lý bởi hàm `handler`.
+
+- Chuyển Tiếp Sự Kiện
+
+* Nếu bạn sử dụng `on`: mà không kèm theo hàm xử lý (giá trị), sự kiện sẽ được chuyển tiếp, cho phép `component` cha lắng nghe sự kiện này.
+
+```svelte
+<SomeComponent on:whatever />
+```
+
+- Chuyển tiếp sự kiện: Với cú pháp này, sự kiện `'whatever'` sẽ được chuyển tiếp lên `component` cha của `SomeComponent`, và nó có thể tiếp tục được lắng nghe ở cấp cao hơn.
+
+- Tổng Kết
+
+- `createEventDispatcher`: Sử dụng để phát ra các sự kiện từ `component` một cách lập trình.
+
+- Chuyển tiếp sự kiện `DOM`: Sử dụng cú pháp `on`: mà không kèm giá trị để chuyển tiếp sự kiện.
+
+- Lắng nghe sự kiện: Bạn có thể lắng nghe các sự kiện từ `component` giống như lắng nghe sự kiện `DOM`.
+
+- Chuyển tiếp sự kiện: Cho phép sự kiện được lắng nghe ở `component` cha hoặc cấp cao hơn.
+
+### --style-props
+
+```svelte
+--style-props="anycssvalue"
+```
+
+Trong `Svelte`, bạn có thể truyền các `custom CSS properties` (các biến CSS) dưới dạng `props` vào `component` để tạo giao diện tùy biến. Điều này giúp bạn dễ dàng tạo các `component` có thể tùy biến giao diện dựa trên các chủ đề `(theme)` khác nhau.
+
+- Khi bạn truyền các custom `properties` vào `component` như sau:
+
+```svelte
+<Slider bind:value min={0} --rail-color="black" --track-color="rgb(0, 0, 255)" />
+```
+
+- Svelte sẽ thực hiện việc `"desugar"` cú pháp này thành một phần tử bọc bên ngoài, như sau:
+
+```svelte
+<div style="display: contents; --rail-color: black; --track-color: rgb(0, 0, 255)">
+	<Slider bind:value min={0} />
+</div>
+```
+
+- Lưu Ý Khi Sử Dụng
+
+* Do có thêm phần tử bọc `<div>`, bạn cần chú ý khi viết `CSS` vì có thể các quy tắc `CSS` của bạn vô tình nhắm mục tiêu vào phần tử bọc này thay vì phần tử thực sự bên trong.
+
+* Sử Dụng Trong SVG
+  Khi component được sử dụng trong `SVG`, cú pháp tương tự sẽ `"desugar"` thành một phần tử <g>:
+
+```svelte
+<g style="--rail-color: black; --track-color: rgb(0, 0, 255)">
+	<Slider bind:value min={0} />
+</g>
+```
+
+- Tương tự, bạn cũng cần chú ý đến các quy tắc `CSS` của bạn khi làm việc với `SVG`.
+
+- Hỗ Trợ `CSS Variables` Trong `Svelte`
+  `Svelte` hỗ trợ sử dụng các biến `CSS`, giúp tạo ra các `component` có thể dễ dàng tùy biến giao diện theo chủ đề. Ví dụ:
+
+```svelte
+<style>
+	.potato-slider-rail {
+		background-color: var(--rail-color, var(--theme-color, 'purple'));
+	}
+</style>
+```
+
+- Trong ví dụ này, biến `--rail-color` sẽ xác định màu nền của `rail`. Nếu `--rail-color` không được cung cấp, `--theme-color` sẽ được sử dụng làm giá trị mặc định. Nếu cả hai biến đều không được đặt, màu mặc định là `'purple'`.
+
+- Cài Đặt Màu Sắc Chủ Đề Toàn Cục
+  Bạn có thể đặt màu chủ đề ở cấp độ toàn cục:
+
+```svelte
+/* global.css */
+html {
+	--theme-color: black;
+}
+```
+
+- Hoặc bạn có thể ghi đè nó ở cấp độ `component`:
+
+```svelte
+<Slider --rail-color="goldenrod" />
+```
+
+- `Svelte` cung cấp một cách tiện lợi để sử dụng `CSS custom properties`, giúp tạo ra các `component` có khả năng tùy biến cao và dễ dàng tích hợp với các hệ thống chủ đề `(theming)`. Tuy nhiên, bạn cần lưu ý về các phần tử bọc được thêm vào khi sử dụng tính năng này, đặc biệt là khi viết `CSS`.
+
+### bind:property
+
+```svelte
+bind:property={variable}
+```
+
+- Trong `Svelte`, bạn có thể bind các `props` của `component` bằng cách sử dụng cú pháp tương tự như khi bind các thuộc tính của phần tử `HTML`.
+
+```svelte
+<Keypad bind:value={pin} />
+```
+
+- `bind:value={pin}`: Kết nối `(bind) prop value` của `component Keypad` với biến `pin` trong `parent component`. Điều này có nghĩa là mọi thay đổi của `pin` trong `parent` sẽ ảnh hưởng đến `prop value` của `Keypad`, và ngược lại, nếu `value` thay đổi trong `Keypad`, nó sẽ cập nhật `pin`.
+
+- `Binding props` trong `Svelte` sử dụng cú pháp `bind:property={variable}` giúp dữ liệu và trạng thái có thể phản ứng `(reactive)` hai chiều giữa `component` cha và `component` con. Điều này tạo ra sự linh hoạt khi xây dựng các `component` tương tác và phức tạp.
+
+### bind:this
+
+```svelte
+bind:this={component_instance}
+```
+
+- Các `component` cũng hỗ trợ `bind:this`, cho phép bạn tương tác với các `instance` của `component` một cách lập trình.
+
+```svelte
+<ShoppingCart bind:this={cart} />
+
+<button on:click={() => cart.empty()}> Empty shopping cart </button>
+```
+
+- Lưu ý rằng chúng ta không thể làm `{cart.empty}` vì `cart` sẽ là `undefined` khi nút bấm được `render` lần đầu và sẽ gây ra lỗi.
