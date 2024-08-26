@@ -6,7 +6,7 @@ Tôi sử dụng repo này để theo dõi tất cả các bài học tôi đã 
 
 - https://svelte.dev/docs/introduction
 
-- https://www.youtube.com/@naive-coder
+- https://learn.svelte.dev/tutorial/welcome-to-svelte
 
 ## Công cụ playground trực tuyến
 
