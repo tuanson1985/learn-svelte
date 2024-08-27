@@ -2,6 +2,8 @@
 
 Tôi sử dụng repo này để theo dõi tất cả các bài học tôi đã học về `svelte`
 
+# Getting Started
+
 ## Tài liệu tham khảo
 
 - https://svelte.dev/docs/introduction
@@ -42,6 +44,8 @@ Nhóm phát triển `Svelte` duy trì một tiện ích mở rộng cho `Visual 
 
 - https://discord.com/channels/457912077277855764/onboarding
 - https://stackoverflow.com/questions/tagged/svelte
+
+# Template Syntax
 
 ## Svelte components
 
@@ -1913,3 +1917,724 @@ bind:this={component_instance}
 ```
 
 - Lưu ý rằng chúng ta không thể làm `{cart.empty}` vì `cart` sẽ là `undefined` khi nút bấm được `render` lần đầu và sẽ gây ra lỗi.
+
+# Runtime
+
+## svelte
+
+`Svelte package` cung cấp các hàm vòng đời và `API` ngữ cảnh `(context API)`.
+
+### onMount
+
+- Hàm `onMount` trong `Svelte` được sử dụng để lên lịch một `callback` chạy ngay khi `component` đã được gắn vào `DOM`. Hàm này phải được gọi trong quá trình khởi tạo của `component` (nhưng không nhất thiết phải nằm bên trong `component`; nó có thể được gọi từ một `module` bên ngoài).
+
+```svelte
+function onMount<T>(
+	fn: () =>
+		| NotFunction<T>
+		| Promise<NotFunction<T>>
+		| (() => any)
+): void;
+```
+ + Hàm `onMount` sẽ chạy callback ngay sau khi `component` đã được gắn vào `DOM`. `Callback` này sẽ không chạy trong các `component` được `render` phía `server-side`.
+
+ + Nếu một hàm được trả về từ `onMount`, nó sẽ được gọi khi `component` bị tháo ra khỏi `DOM`. Điều này thường được sử dụng để dọn dẹp các tài nguyên hoặc lắng nghe sự kiện khi `component` không còn cần thiết nữa.
+
+- Chạy code khi `component` được gắn vào `DOM`:
+
+```svelte
+<script>
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		console.log('the component has mounted');
+	});
+</script>
+```
+  + Trong ví dụ này, `console.log('the component has mounted')` sẽ chạy khi `component` được gắn vào `DOM`.
+
+- Dọn dẹp khi `component` bị tháo ra khỏi `DOM`:
+
+```svelte
+<script>
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		const interval = setInterval(() => {
+			console.log('beep');
+		}, 1000);
+
+		// Dọn dẹp bằng cách trả về hàm clearInterval
+		return () => clearInterval(interval);
+	});
+</script>
+```
+
+- Ở đây, `setInterval` tạo ra một `interval` chạy mỗi giây. Khi `component` bị tháo ra khỏi `DOM`, hàm trả về từ `onMount` sẽ được gọi để dọn dẹp `interval`.
+
+- Lưu ý:
+
+ + Hành vi này chỉ hoạt động khi hàm được truyền vào `onMount` đồng bộ trả về một giá trị. Các hàm `async` luôn trả về một `Promise`, do đó không thể đồng bộ trả về một hàm.
+
+ ### beforeUpdatepermalink
+
+ Hàm `beforeUpdate` trong `Svelte` được sử dụng để lên lịch một `callback` chạy ngay trước khi `component` được cập nhật sau bất kỳ thay đổi nào về trạng thái.
+
+```svelte
+function beforeUpdate(fn: () => any): void;
+```
+
+- Mô tả:
+
+ + Hàm `beforeUpdate` cho phép bạn thực hiện các thao tác ngay trước khi `Svelte` cập nhật `DOM` để phản ánh các thay đổi về trạng thái của `component`.
+
+ + Lần đầu tiên `callback` được chạy sẽ là trước khi `onMount` được gọi. Điều này có nghĩa là `beforeUpdate` có thể chạy ngay cả trước khi `component` thực sự được gắn vào `DOM`.
+
+```svelte
+<script>
+	import { beforeUpdate } from 'svelte';
+
+	beforeUpdate(() => {
+		console.log('the component is about to update');
+	});
+</script>
+```
+
+Trong ví dụ này, `console.log('the component is about to update')` sẽ chạy mỗi khi `component` chuẩn bị được cập nhật sau một thay đổi về trạng thái. Nó cho phép bạn thực hiện các thao tác trước khi `DOM` của `component` được cập nhật.
+
+### afterUpdatepermalink
+
+- Hàm `afterUpdate` trong `Svelte` được sử dụng để lên lịch một `callback` chạy ngay sau khi `component` đã được cập nhật.
+
+```svelte
+function afterUpdate(fn: () => any): void;
+```
+
+- Mô tả:
+ + Hàm `afterUpdate` cho phép bạn thực hiện các thao tác ngay sau khi `Svelte` đã cập nhật `DOM` để phản ánh các thay đổi về trạng thái của `component`.
+ + Lần đầu tiên `callback` này chạy sẽ là sau khi `onMount` đã được thực thi.
+
+ ```svelte
+<script>
+	import { afterUpdate } from 'svelte';
+
+	afterUpdate(() => {
+		console.log('the component just updated');
+	});
+</script>
+```
+
+### onDestroypermalink
+
+```svelte
+function onDestroy(fn: () => any): void;
+```
+
+- Hàm `onDestroy` trong `Svelte` được sử dụng để lên lịch một `callback` chạy ngay trước khi `component` bị tháo ra khỏi `DOM`.
+
+- Mô tả:
+Hàm `onDestroy` cho phép bạn thực hiện các thao tác dọn dẹp, chẳng hạn như hủy bỏ các sự kiện, xóa bộ hẹn giờ, hoặc giải phóng tài nguyên, ngay trước khi `component` bị phá hủy.
+- Khác với `onMount`, `beforeUpdate`, và `afterUpdate`, hàm `onDestroy` cũng chạy trong các `component` được `render` phía `server-side`.
+
+```svelte
+<script>
+	import { onDestroy } from 'svelte';
+
+	onDestroy(() => {
+		console.log('the component is being destroyed');
+	});
+</script>
+```
+
+- Trong ví dụ này, `console.log('the component is being destroyed')` sẽ chạy ngay trước khi `component` bị tháo ra khỏi `DOM`, giúp bạn xử lý bất kỳ công việc nào cần thiết khi `component` không còn tồn tại nữa.
+
+### tick
+
+```svelte
+function tick(): Promise<void>;
+```
+
+- Hàm `tick` trong `Svelte` trả về một `Promise` và được sử dụng để đợi cho đến khi tất cả các thay đổi trạng thái đang chờ xử lý đã được áp dụng. Nếu không có thay đổi nào đang chờ, `tick` sẽ đợi đến `microtask` tiếp theo trước khi tiếp tục.
+
+```svelte
+import { tick } from 'svelte';
+
+async function example() {
+	await tick();
+	// code to execute after state changes have been applied
+}
+```
+
+- Mô tả:
+ + Hàm `tick` cho phép bạn thực hiện một tác vụ ngay sau khi `Svelte` đã hoàn tất việc cập nhật `DOM` với các thay đổi trạng thái hiện tại.
+ + Khi gọi `tick`, bạn có thể chờ cho đến khi mọi cập nhật về trạng thái đã được phản ánh trong `DOM` trước khi thực hiện bước tiếp theo trong logic của mình.
+
+```svelte
+<script>
+	import { beforeUpdate, tick } from 'svelte';
+
+	beforeUpdate(async () => {
+		console.log('the component is about to update');
+		await tick();
+		console.log('the component just updated');
+	});
+</script>
+```
+
+- Trong ví dụ này:
+
+ + `console.log('the component is about to update')` sẽ chạy ngay trước khi `component` được cập nhật.
+ + `await tick()` sẽ đợi cho đến khi tất cả các thay đổi về trạng thái đã được áp dụng và DOM đã được cập nhật.
+ + Sau khi `tick` hoàn tất, c`onsole.log('the component just updated')` sẽ chạy, cho biết rằng `component` đã được cập nhật xong.
+
+ ### setContext
+
+ - Hàm `setContext` trong `Svelte` cho phép bạn liên kết một đối tượng ngữ cảnh với `component` hiện tại bằng một khóa `(key)` cụ thể. Đối tượng ngữ cảnh này sau đó có thể được truy cập từ các `component` con của `component` hiện tại (bao gồm cả nội dung được chèn vào) bằng cách sử dụng hàm `getContext`.
+
+```svelte
+function setContext<T>(key: any, context: T): T;
+```
+
+- Mô tả:
+ + `setContext` liên kết đối tượng ngữ cảnh `(context)` với khóa `(key)` và trả về đối tượng đó.
+ + Ngữ cảnh này sẽ được cung cấp cho các `component` con thông qua hàm `getContext`.
+ + Hàm `setContext` cần được gọi trong quá trình khởi tạo của `component`, tức là trong phần `<script>` của `component`.
+
+```svelte
+<script>
+	import { setContext } from 'svelte';
+
+	setContext('answer', 42);
+</script>
+```
+
+- Trong ví dụ này, đối tượng ngữ cảnh 42 được liên kết với khóa `'answer'` và có thể được truy cập từ các `component` con bằng cách sử dụng `getContext`.
+
+- Sử dụng `getContext` để truy cập ngữ cảnh:
+
+```svelte
+<script>
+	import { getContext } from 'svelte';
+
+	const answer = getContext('answer');
+	console.log(answer); // 42
+</script>
+```
+
+- Lưu ý:
+
+ + Ngữ cảnh không tự động phản ứng với các thay đổi. Nếu bạn cần giá trị phản ứng trong ngữ cảnh, bạn có thể truyền một `store` vào ngữ cảnh. `Store` là phản ứng và sẽ tự động cập nhật các `component` khi giá trị của nó thay đổi.
+
+### getContext
+
+- Hàm `getContext` trong `Svelte` được sử dụng để truy xuất ngữ cảnh `(context)` đã được thiết lập bởi một `component` cha bằng hàm `setContext`. Nó lấy ngữ cảnh dựa trên khóa `(key)` được chỉ định.
+
+```svelte
+function getContext<T>(key: any): T;
+```
+
+- Mô tả:
+ + `getContext` lấy ngữ cảnh liên kết với khóa cụ thể từ `component` cha gần nhất.
+ + Hàm này cần được gọi trong quá trình khởi tạo của `component`, tức là trong phần `<script>` của `component`.
+ + Nếu không có ngữ cảnh nào được thiết lập với khóa đó, `getContext` sẽ gây lỗi.
+
+- Trong `component` cha:
+
+```svelte
+<script>
+	import { setContext } from 'svelte';
+
+	setContext('answer', 42);
+</script>
+
+<ChildComponent />
+```
+
+- Trong `component` con `(ChildComponent)`:
+
+```svelte
+<script>
+	import { getContext } from 'svelte';
+
+	const answer = getContext('answer');
+	console.log(answer); // 42
+</script>
+```
+
+- Trong ví dụ này, `component` cha thiết lập ngữ cảnh với khóa `'answer'` và giá trị 42.
+
+- `Component` con sử dụng `getContext` để truy xuất giá trị của ngữ cảnh đó bằng cùng khóa `'answer'`.
+
+- Lưu ý:
+
+ + `getContext` chỉ có thể truy cập ngữ cảnh từ các `component` cha. Nếu không có ngữ cảnh được thiết lập với khóa đó, hoặc nếu gọi `getContext` trước khi `setContext` được thực hiện trong một `component` cha, bạn sẽ gặp lỗi.
+ + Hàm `getContext` cần được gọi trong quá trình khởi tạo của `component`, không thể sử dụng ngoài khối `<script>`.
+
+### hasContext
+
+- Hàm `hasContext` trong `Svelte` được sử dụng để kiểm tra xem một khóa `(key)` cụ thể có ngữ cảnh `(context)` được thiết lập trong các `component` cha hay không. Nó trả về một giá trị `boolean` cho biết ngữ cảnh với khóa đó có tồn tại hay không.
+
+```svelte
+function hasContext(key: any): boolean;
+```
+
+- Mô tả:
+ + `hasContext` kiểm tra sự tồn tại của ngữ cảnh với khóa cụ thể.
+ + Hàm này trả về `true` nếu ngữ cảnh với khóa đó đã được thiết lập bởi một `component` cha, và `false` nếu không có ngữ cảnh nào được thiết lập với khóa đó.
+ + `hasContext` cần được gọi trong quá trình khởi tạo của `component`, tức là trong phần `<script>` của `component`.
+
+- Trong component cha:
+
+```svelte
+<script>
+	import { setContext } from 'svelte';
+
+	setContext('answer', 42);
+</script>
+
+<ChildComponent />
+```
+
+- Trong `component` con `(ChildComponent)`:
+
+```svelte
+<script>
+	import { hasContext, getContext } from 'svelte';
+
+	if (hasContext('answer')) {
+		const answer = getContext('answer');
+		console.log(answer); // 42
+	} else {
+		console.log('No context found for "answer"');
+	}
+</script>
+```
+
+- Trong ví dụ này, `component` cha thiết lập ngữ cảnh với khóa `'answer'`.
+- `Component` con sử dụng `hasContext` để kiểm tra sự tồn tại của ngữ cảnh với khóa `'answer'`. Nếu ngữ cảnh tồn tại, nó sẽ sử dụng `getContext` để truy xuất giá trị. Nếu không có ngữ cảnh với khóa đó, nó sẽ thông báo rằng không có ngữ cảnh được tìm thấy.
+
+- Lưu ý:
+
+ + `hasContext` chỉ có thể kiểm tra ngữ cảnh từ các `component` cha. Nó không thể kiểm tra ngữ cảnh từ các `component` không liên quan hoặc từ các `component` cha không được thiết lập ngữ cảnh.
+ + Hàm `hasContext` cần được gọi trong quá trình khởi tạo của `component` và không thể sử dụng ngoài khối `<script>`.
+
+### getAllContexts
+
+```svelte
+function getAllContexts<
+	T extends Map<any, any> = Map<any, any>
+>(): T;
+```
+
+Hàm `getAllContexts` trong `Svelte` sẽ lấy toàn bộ bản đồ ngữ cảnh `(context map)` thuộc về `component` cha gần nhất. Hàm này phải được gọi trong quá trình khởi tạo của `component`. Nó hữu ích, ví dụ, khi bạn tạo một `component` bằng cách lập trình và muốn truyền ngữ cảnh hiện có cho nó.
+
+```svelte
+<script>
+	import { getAllContexts } from 'svelte';
+
+	// Lấy bản đồ ngữ cảnh từ component cha gần nhất
+	const contexts = getAllContexts();
+</script>
+```
+- Giải thích:
+
+`getAllContexts` trả về một bản đồ chứa tất cả các ngữ cảnh (`Map object)` từ `component` cha gần nhất.
+Bạn có thể sử dụng bản đồ này để truy cập hoặc thay đổi ngữ cảnh, giúp quản lý trạng thái hoặc dữ liệu dùng chung giữa các `component` lồng nhau dễ dàng hơn.
+Trong lập trình `Svelte`, hàm này thường được sử dụng khi bạn cần đảm bảo rằng một `component` được tạo động có quyền truy cập vào cùng một ngữ cảnh như `component` cha của nó.
+
+### createEventDispatcher
+
+```svelte
+function createEventDispatcher<
+	EventMap extends Record<string, any> = any
+>(): EventDispatcher<EventMap>;
+```
+
+- Hàm này tạo ra một bộ phân phối sự kiện `(event dispatcher)` có thể được sử dụng để phân phối `(dispatch)` các sự kiện của `component`. Các bộ phân phối sự kiện là các hàm có thể nhận hai đối số: name (tên sự kiện) và `detail` (chi tiết sự kiện).
+
+- Các sự kiện của `component` được tạo ra với `createEventDispatcher` sẽ tạo ra một sự kiện `CustomEvent`. Những sự kiện này không có tính chất lan truyền `(bubble)`. Đối số `detail` tương ứng với thuộc tính `CustomEvent.detail` và có thể chứa bất kỳ loại dữ liệu nào.
+
+```svelte
+<script>
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+</script>
+
+<button on:click={() => dispatch('notify', 'giá trị chi tiết')}>Gửi Sự Kiện</button>
+```
+
+- Các sự kiện được phân phối từ các `component` con có thể được lắng nghe trong `component` cha. Dữ liệu được cung cấp khi sự kiện được phân phối có sẵn trong thuộc tính detail của đối tượng sự kiện.
+
+```svelte
+<script>
+	function callbackFunction(event) {
+		console.log(`Notify đã được kích hoạt! Chi tiết: ${event.detail}`);
+	}
+</script>
+
+<Child on:notify={callbackFunction} />
+```
+
+- Sự kiện có thể bị hủy `(cancelable)` bằng cách truyền một đối số thứ ba vào hàm `dispatch`. Hàm này sẽ trả về false nếu sự kiện bị hủy với `event.preventDefault()`, ngược lại nó sẽ trả về `true`.
+
+```svelte
+<script>
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+
+	function notify() {
+		const shouldContinue = dispatch('notify', 'giá trị chi tiết', { cancelable: true });
+		if (shouldContinue) {
+			// không có listener nào gọi preventDefault
+		} else {
+			// một listener đã gọi preventDefault
+		}
+	}
+</script>
+```
+
+- Bạn có thể định kiểu cho bộ phân phối sự kiện để xác định các sự kiện mà nó có thể nhận. Điều này sẽ làm cho mã của bạn an toàn hơn về mặt kiểu dữ liệu (`type-safe)` cả trong `component` (các lời gọi sai sẽ bị cảnh báo) và khi sử dụng `component` (các loại sự kiện bây giờ sẽ được thu hẹp).
+
+### Types
+
+#### ComponentConstructorOptions
+
+```svelte
+interface ComponentConstructorOptions<
+	Props extends Record<string, any> = Record<string, any>
+> { … }
+```
+
+- `ComponentConstructorOptions` là một giao diện `(interface)` định nghĩa các tùy chọn mà bạn có thể cung cấp khi tạo một `instance` của một `component` trong `Svelte`.
+
+- Các thuộc tính:
+
+- target: Element | Document | ShadowRoot
+ + Mô tả: Phần tử DOM mà `component` sẽ được render vào. Đây là thuộc tính bắt buộc.
+
+- anchor?: Element (tùy chọn)
+ + Mô tả: Nếu được cung cấp, `component` sẽ được chèn vào trước phần tử này thay vì trở thành phần tử con cuối cùng của target.
+
+- props?: Props (tùy chọn)
+ + Mô tả: Đối tượng chứa các thuộc tính (props) sẽ được truyền vào `component`. Các thuộc tính này sẽ khởi tạo giá trị của các props của `component`.
+
+- context?: Map<any, any> (tùy chọn)
+ + Mô tả: Bản đồ (map) chứa các giá trị ngữ cảnh (context) được truyền từ các `component` cha.
+
+- hydrate?: boolean (tùy chọn)
+ + Mô tả: Nếu được đặt là true, Svelte sẽ cố gắng "hydrate" (kết hợp lại) với DOM hiện tại thay vì tạo ra DOM mới. Điều này thường được sử dụng trong các ứng dụng render phía server (server-side rendering).
+
+- intro?: boolean (tùy chọn)
+ + Mô tả: Nếu được đặt là true, các animation intro sẽ được kích hoạt khi `component` được render lần đầu.
+
+- $$inline?: boolean (tùy chọn)
+ + Mô tả: Một cờ đặc biệt, thường được sử dụng nội bộ bởi Svelte, để xác định liệu `component` có nên được render như một inline `component` hay không.
+
+ #### ComponentEvents
+
+ - `ComponentEvents` là một kiểu dữ liệu tiện lợi trong `Svelte` được sử dụng để lấy các sự kiện mà một `component` cụ thể mong đợi. Nó giúp bạn xác định và làm việc với các sự kiện mà `component` sẽ phát ra.
+
+```svelte
+<script lang="ts">
+   import type { ComponentEvents } from 'svelte';
+   import Component from './Component.svelte';
+
+   function handleCloseEvent(event: ComponentEvents<Component>['close']) {
+	  console.log(event.detail);
+   }
+</script>
+
+<Component on:close={handleCloseEvent} />
+```
+
+- Cách hoạt động:
+
+```svelte
+type ComponentEvents<Component extends SvelteComponent_1> =
+	Component extends SvelteComponent<any, infer Events>
+		? Events
+		: never;
+```
+
+- `ComponentEvents<Component>`: Đây là một kiểu dữ liệu nhận vào một `component` và trả về các sự kiện mà `component` đó có thể phát ra.
+
+- `Component extends SvelteComponent<any, infer Events>`: Đây là điều kiện kiểm tra xem `Component` có phải là một `SvelteComponent` hay không. Nếu đúng, nó sẽ sử dụng `infer` để trích xuất các sự kiện của `component` vào biến `Events`.
+
+- `? Events : never`: Nếu `Component` là một `SvelteComponent`, nó sẽ trả về `Events` (các sự kiện của `component`). Nếu không, nó sẽ trả về `never`, có nghĩa là kiểu dữ liệu không hợp lệ.
+
+- Ứng dụng trong ví dụ:
+
+- `ComponentEvents<Component>['close']`: Dòng này lấy kiểu của sự kiện `close` từ `component` `Component`. Nó giúp đảm bảo rằng hàm `handleCloseEvent` có kiểu chính xác cho đối số event.
+
+- Điều này giúp mã `TypeScript` của bạn an toàn hơn và tránh các lỗi khi làm việc với các sự kiện của `component` trong `Svelte`.
+
+#### ComponentProps
+
+- `ComponentProps` là một kiểu dữ liệu tiện lợi trong `Svelte`, được sử dụng để lấy các thuộc tính `(props)` mà một `component` cụ thể mong đợi. Nó giúp bạn xác định và làm việc với các props của `component` một cách an toàn hơn trong `TypeScript`.
+
+```svelte
+<script lang="ts">
+	import type { ComponentProps } from 'svelte';
+	import Component from './Component.svelte';
+
+	const props: ComponentProps<Component> = { foo: 'bar' }; // Báo lỗi nếu đây không phải là các props đúng
+</script>
+```
+
+- Cách hoạt động:
+
+```svelte
+type ComponentProps<Component extends SvelteComponent_1> =
+	Component extends SvelteComponent<infer Props>
+		? Props
+		: never;
+```
+
+- `ComponentProps<Component>`: Đây là một kiểu dữ liệu nhận vào một `component` và trả về các thuộc tính `(props)` mà `component` đó có thể nhận.
+
+- `Component extends SvelteComponent<infer Props>`: Đây là điều kiện kiểm tra xem `Component` có phải là một `SvelteComponent` hay không. Nếu đúng, nó sẽ sử dụng `infer` để trích xuất các props của `component` vào biến `Props`.
+
+- `? Props : never: Nếu Component là một SvelteComponent`, nó sẽ trả về `Props` (các `props` của `component`). Nếu không, nó sẽ trả về `never`, có nghĩa là kiểu dữ liệu không hợp lệ.
+
+- Ứng dụng trong ví dụ:
+- `ComponentProps<Component>`: Trong ví dụ này, dòng này xác định kiểu của các `props` mà `Component` mong đợi. Khi bạn gán giá trị cho `props`, `TypeScript` sẽ kiểm tra xem các giá trị đó có khớp với các props mà `Component` yêu cầu hay không. Nếu không khớp, `TypeScript` sẽ báo lỗi.
+Điều này giúp bạn đảm bảo rằng bạn đang truyền đúng các `props` vào `component`, giúp mã của bạn an toàn hơn và tránh các lỗi tiềm ẩn khi sử dụng `TypeScript` trong `Svelte`.
+
+#### ComponentType
+
+- `ComponentType` là một kiểu dữ liệu tiện lợi trong `Svelte`, được sử dụng để xác định kiểu của một `component Svelte`. Kiểu này rất hữu ích khi bạn làm việc với các `component` động, ví dụ như khi sử dụng `<svelte:component>`.
+
+```svelte
+<script lang="ts">
+	import type { ComponentType, SvelteComponent } from 'svelte';
+	import Component1 từ './Component1.svelte';
+	import Component2 từ './Component2.svelte';
+
+	const component: ComponentType = someLogic() ? Component1 : Component2;
+	const componentOfCertainSubType: ComponentType<SvelteComponent<{ needsThisProp: string }>> = someLogic() ? Component1 : Component2;
+</script>
+
+<svelte:component this={component} />
+<svelte:component this={componentOfCertainSubType} needsThisProp="hello" />
+```
+
+- Cách hoạt động:
+
+```svelte
+type ComponentType<
+	Component extends SvelteComponent = SvelteComponent
+> = (new (
+	options: ComponentConstructorOptions<
+		Component extends SvelteComponent<infer Props>
+			? Props
+			: Record<string, any>
+	>
+) => Component) & {
+	/** The custom element version of the component. Only present if compiled with the `customElement` compiler option */
+	element?: typeof HTMLElement;
+};
+```
+
+- `ComponentType<Component>`: Đây là một kiểu dữ liệu dùng để mô tả kiểu của một `component Svelte`. Bạn có thể chỉ định một kiểu `component` cụ thể bằng cách truyền vào một kiểu mở rộng từ `SvelteComponent`.
+
+- `new (options: ComponentConstructorOptions<Props>) => Component`: Định nghĩa này chỉ ra rằng kiểu `ComponentType` là một hàm khởi tạo mới `(new)`, nhận vào `options` là một đối tượng có kiểu `ComponentConstructorOptions<Props>`. Props này sẽ được suy luận `(infer)` từ kiểu `Component` nếu `Component` mở rộng từ `SvelteComponent`.
+
+- `element?: typeof HTMLElement`: Đây là một thuộc tính tùy chọn trong `ComponentType`. Nó chỉ tồn tại nếu `component` được biên dịch với tùy chọn `customElement` của trình biên dịch `(compiler)`.
+
+- Ứng dụng trong ví dụ:
+- `component: ComponentType`: Trong ví dụ này, `component` có kiểu là `ComponentType`, cho phép bạn chọn một trong hai `component` (`Component1` hoặc `Component2`) dựa trên `logic` nào đó `(someLogic())`.
+
+- `componentOfCertainSubType: ComponentType<SvelteComponent<{ needsThisProp: string }>>`: Ở đây, `componentOfCertainSubType` có kiểu là một `ComponentType` cụ thể với `SvelteComponent` yêu cầu một `prop` là `needsThisProp` có kiểu `string`. Điều này đảm bảo rằng khi bạn sử dụng `component` đó, bạn phải truyền vào `prop needsThisProp` với giá trị hợp lệ.
+
+Điều này giúp mã `TypeScript` của bạn mạnh mẽ và an toàn hơn khi làm việc với các `component` động và `props` trong `Svelte`.
+
+#### SvelteComponent
+
+- `SvelteComponent` là lớp cơ sở cho các `component` trong `Svelte` với một số cải tiến nhỏ cho việc phát triển `(dev-enhancements)`. Nó được sử dụng khi `dev=true`, tức là trong môi trường phát triển để cung cấp các công cụ hỗ trợ lập trình.
+
+- Bạn có một thư viện `component` trên `npm` gọi là `component-library`, trong đó xuất ra một `component` gọi là `MyComponent`. Để cung cấp kiểu dữ liệu `(typings)` cho người dùng `Svelte+TypeScript`, bạn tạo một `file` `index.d.ts` như sau:
+
+```svelte
+import { SvelteComponent } from "svelte";
+
+export class MyComponent extends SvelteComponent<{foo: string}> {}
+```
+
+- Điều này cho phép các `IDE` như `VS Code` với phần mở rộng `Svelte` cung cấp tính năng tự động hoàn thành `(intellisense)` và sử dụng `component` trong một `file Svelte` với `TypeScript` như sau:
+
+```svelte
+<script lang="ts">
+	import { MyComponent } from "component-library";
+</script>
+
+<MyComponent foo={'bar'} />
+```
+
+- Cách hoạt động:
+
+```svelte
+class SvelteComponent<
+	Props extends Record<string, any> = any,
+	Events extends Record<string, any> = any,
+	Slots extends Record<string, any> = any
+> extends SvelteComponent_1<Props, Events> {
+	[prop: string]: any;
+	constructor(options: ComponentConstructorOptions<Props>);
+	$capture_state(): void;
+	$inject_state(): void;
+}
+```
+
+- `Props extends Record<string, any> = any`: Đây là kiểu dữ liệu của các thuộc tính `(props)` mà `component` có thể nhận. Mặc định là `any`, nhưng bạn có thể chỉ định kiểu cụ thể cho `Props` khi kế thừa `SvelteComponent`.
+
+- `Events extends Record<string, any> = any`: Đây là kiểu dữ liệu của các sự kiện mà `component` có thể phát ra. Mặc định là `any`.
+
+- `Slots extends Record<string, any> = any`: Đây là kiểu dữ liệu của các slots mà `component` có thể chứa. Mặc định là `any`.
+
+- `[prop: string]: any`: Điều này cho phép `SvelteComponent` nhận bất kỳ thuộc tính nào với kiểu any.
+
+- `constructor(options: ComponentConstructorOptions<Props>)`: Hàm khởi tạo của `SvelteComponent` nhận vào các tùy chọn để cấu hình `component`.
+
+- `$capture_state()`: Phương thức đặc biệt được sử dụng trong quá trình phát triển để chụp `(capture)` trạng thái của `component`.
+
+- `$inject_state()`: Phương thức đặc biệt được sử dụng trong quá trình phát triển để chèn `(inject)` trạng thái vào `component`.
+
+- `SvelteComponent` là lớp cơ sở giúp bạn tạo các `component` với kiểu dữ liệu rõ ràng và hỗ trợ công cụ phát triển. Việc định nghĩa kiểu cho các `props` và sự kiện giúp mã của bạn an toàn hơn và hỗ trợ tính năng tự động hoàn thành trong `IDE`.
+
+Nếu bạn cần thêm thông tin hoặc có câu hỏi khác, hãy cho mình biết nhé!
+
+#### SvelteComponentTyped
+
+`SvelteComponentTyped` là một lớp cơ sở đã được sử dụng trước đây trong `Svelte` để cung cấp kiểu dữ liệu mạnh mẽ cho các `component`. Tuy nhiên, lớp này đã được thay thế bằng `SvelteComponent` trong các phiên bản mới hơn của `Svelte`. Để biết thêm thông tin chi tiết về sự thay đổi này, bạn có thể xem PR #8512 trên GitHub.
+
+```svelte
+class SvelteComponentTyped<
+	Props extends Record<string, any> = any,
+	Events extends Record<string, any> = any,
+	Slots extends Record<string, any> = any
+> extends SvelteComponent<Props, Events, Slots> {}
+```
+
+- `Props extends Record<string, any> = any`: Đây là kiểu dữ liệu cho các thuộc tính `(props)` mà `component` có thể nhận. Mặc định là `any`, nhưng bạn có thể chỉ định kiểu cụ thể cho `Props`.
+
+- `Events extends Record<string, any> = any`: Đây là kiểu dữ liệu cho các sự kiện mà `component` có thể phát ra. Mặc định là `any`.
+
+- `Slots extends Record<string, any> = any`: Đây là kiểu dữ liệu cho các slots mà `component` có thể chứa. Mặc định là `any`.
+
+- `extends SvelteComponent<Props, Events, Slots>`: `SvelteComponentTyped` kế thừa từ `SvelteComponent`, và cung cấp các kiểu mạnh mẽ cho `Props`, `Events`, và `Slots`.
+
+- Lịch sử và Hiện tại:
+
+- Trước đây: `SvelteComponentTyped` đã được sử dụng để định nghĩa các `component` với các kiểu dữ liệu cho `props`, sự kiện, và `slots`.
+
+- Hiện tại: `SvelteComponent` là lớp cơ sở được khuyến khích sử dụng thay cho `SvelteComponentTyped`. Nó cung cấp cùng tính năng với một số cải tiến và được hỗ trợ tốt hơn trong các phiên bản `Svelte` mới.
+
+## svelte/store
+
+Mô-đun `svelte/store` `export` các hàm để tạo các store `readable`, `writable`, và `derived`.
+
+- Hãy nhớ rằng bạn không cần phải sử dụng những hàm này để tận hưởng cú pháp phản ứng `$store` trong các thành phần của bạn. Bất kỳ đối tượng nào thực hiện đúng các phương thức `.subscribe`, `.unsubscribe`, và (tùy chọn) `.set` đều là một `store` hợp lệ, và sẽ hoạt động cả với cú pháp đặc biệt và với các `store derived` tích hợp sẵn của `Svelte`.
+
+Điều này cho phép bạn bao bọc gần như bất kỳ thư viện quản lý trạng thái phản ứng nào khác để sử dụng trong `Svelte`. Đọc thêm về hợp đồng `store` để xem cách một triển khai đúng cách trông như thế nào.
+
+### writable
+
+```svelte
+function writable<T>(
+	value?: T | undefined,
+	start?: StartStopNotifier<T> | undefined
+): Writable<T>;
+```
+
+- Hàm `writable<T>` là một hàm tạo `store` có thể thiết lập giá trị từ các thành phần 'bên ngoài'. `Store` được tạo ra dưới dạng một đối tượng với các phương thức bổ sung `set` và `update`.
+
+- `set` là một phương thức nhận một đối số là giá trị cần được thiết lập. Giá trị của `store` sẽ được đặt thành giá trị của đối số nếu giá trị của `store` chưa bằng giá trị đó.
+
+- `update` là một phương thức nhận một đối số là một hàm `callback`. Hàm `callback` nhận giá trị hiện tại của `store` làm đối số và trả về giá trị mới để đặt vào `store`.
+
+```svelte
+// store.ts
+import { writable } from 'svelte/store';
+
+const count = writable(0);
+
+count.subscribe((value) => {
+	console.log(value);
+}); // in ra '0'
+
+count.set(1); // in ra '1'
+
+count.update((n) => n + 1); // in ra '2'
+```
+
+- Nếu một hàm được truyền vào làm đối số thứ hai, hàm đó sẽ được gọi khi số lượng người đăng ký chuyển từ không có người đăng ký nào sang có một người đăng ký (nhưng không từ một người đăng ký sang hai người đăng ký, v.v.). Hàm đó sẽ nhận một hàm `set` để thay đổi giá trị của `store`, và một hàm `update` hoạt động giống như phương thức `update` của `store`, nhận một hàm `callback` để tính toán giá trị mới của `store` từ giá trị cũ. Hàm đó phải trả về một hàm `stop` được gọi khi số lượng người đăng ký chuyển từ một người sang không có người đăng ký nào.
+
+Ví dụ với hàm `callback`:
+
+```svelte
+// store.ts
+import { writable } from 'svelte/store';
+
+const count = writable(0, () => {
+	console.log('got a subscriber');
+	return () => console.log('no more subscribers');
+});
+
+count.set(1); // không làm gì
+
+const unsubscribe = count.subscribe((value) => {
+	console.log(value);
+}); // in ra 'got a subscriber', sau đó là '1'
+
+unsubscribe(); // in ra 'no more subscribers'
+```
+
+### readable
+
+```svelte
+function readable<T>(
+	value?: T | undefined,
+	start?: StartStopNotifier<T> | undefined
+): Readable<T>;
+```
+
+- Hàm `readable<T>` tạo ra một store mà giá trị của nó không thể được thiết lập từ các thành phần 'bên ngoài'. Tham số đầu tiên là giá trị khởi tạo của `store`, và tham số thứ hai của hàm `readable` tương tự như tham số thứ hai của hàm `writable`.
+
+```svelte
+import { readable } from 'svelte/store';
+
+// Tạo một store `time` với giá trị khởi tạo là ngày hiện tại
+const time = readable(new Date(), (set) => {
+	set(new Date());
+
+	// Cập nhật giá trị của store mỗi giây
+	const interval = setInterval(() => {
+		set(new Date());
+	}, 1000);
+
+	// Làm sạch interval khi không còn người đăng ký nào
+	return () => clearInterval(interval);
+});
+
+// Tạo một store `ticktock` với giá trị khởi tạo là 'tick'
+const ticktock = readable('tick', (set, update) => {
+	// Cập nhật giá trị của store mỗi giây
+	const interval = setInterval(() => {
+		update((sound) => (sound === 'tick' ? 'tock' : 'tick'));
+	}, 1000);
+
+	// Làm sạch interval khi không còn người đăng ký nào
+	return () => clearInterval(interval);
+});
+```
+
+- Giải thích:
+
+- `readable` tạo một `store` có giá trị chỉ có thể được cập nhật từ bên trong hàm `readable`, không thể được thay đổi trực tiếp từ các thành phần bên ngoài.
+- `set` là một hàm dùng để thiết lập giá trị của `store`.
+- `update` là một hàm dùng để cập nhật giá trị của `store` bằng cách áp dụng một hàm `callback` lên giá trị hiện tại.
+- Trong ví dụ đầu tiên, `store time `được cập nhật mỗi giây với ngày và giờ hiện tại.
+- Trong ví dụ thứ hai, `store ticktock` chuyển đổi giá trị giữa `'tick'` và `'tock'` mỗi giây.
+
